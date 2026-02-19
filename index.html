@@ -165,7 +165,6 @@ function showStruk(t){
     let encoded = encodeURIComponent(pesan);
     document.getElementById("store").innerHTML=`<div class="card"><h3>🧾 STRUK PEMBELIAN</h3><pre style="text-align:left">====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\nStatus: ${t.status}\n====================</pre><button class="buy-btn" onclick="window.open('https://wa.me/${seller}?text=${encoded}','_blank')">Kirim Bukti ke Seller</button><button onclick="loadStore()">Kembali</button></div>`;
 }
-/* ========== ADMIN PANEL BARU ========== */
 function adminPanel(){
     document.getElementById("about-section").style.display = "none";
     let products = JSON.parse(localStorage.getItem("products"));
