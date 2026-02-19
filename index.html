@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratarasmp Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#140f2d,#1c1340,#0f0a25);
+color:white;
+}
+
+header{
+text-align:center;
+padding:35px;
+font-size:32px;
+font-weight:700;
+background:linear-gradient(90deg,#00f7ff,#8a2be2);
+-webkit-background-clip:text;
+color:transparent;
+text-shadow:0 0 25px rgba(0,255,255,0.6);
+cursor:pointer;
+user-select: none;
+}
+
+.container{
+padding:20px;
+max-width:1000px;
+margin:auto;
+}
+
+.products-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+margin-top:10px;
+}
+
+.product-card{
+background:#181828;
+border:1px solid #2a2a4a;
+border-radius:14px;
+padding:18px;
+transition:0.3s;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.product-card:hover{
+border:1px solid #00f7ff;
+box-shadow:0 0 18px rgba(0,247,255,0.35);
+}
+
+.product-title{font-size:17px;font-weight:600;margin-bottom:6px;}
+.product-desc{font-size:13px;opacity:0.75;margin-bottom:12px;line-height:1.6;white-space:pre-line;}
+.product-price{font-size:15px;font-weight:700;margin-bottom:12px;}
+.product-btn{width:100%;background:#1677ff;color:white;padding:8px;border-radius:8px;font-size:14px;border:none;cursor:pointer;}
+
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(15px);
+padding:25px;
+border-radius:20px;
+margin-bottom:25px;
+border:1px solid rgba(0,255,255,0.4);
+box-shadow:0 0 25px rgba(0,255,255,0.3);
+text-align:center;
+}
+
+button{
+padding:10px 18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+margin:5px 5px 0 0;
+}
+
+.buy-btn{
+background:linear-gradient(90deg,#00f7ff,#8a2be2);
+color:white;
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin:6px 0;
+border-radius:10px;
+border:1px solid rgba(0,255,255,0.4);
+background:rgba(255,255,255,0.05);
+color:white;
+outline:none;
+font-family:'Poppins',sans-serif;
+}
+
+textarea{resize:none;}
+
+.warning{color:#00f7ff;margin-top:12px;font-size:14px;}
+</style>
+</head>
+<body>
+
+<header id="secretHeader">Ratarasmp Shop</header>
+<div class="container" id="store"></div>
+
+<script>
+let seller = "6285143590943";
+let adminPass = "rataradev";
+let selectedProduct = null;
+let buyerData = {};
+let clickCount = 0;
+
+let defaultProducts = [
+{name:"Fruzy", desc:"Rank Fruzy Basic\nFitur:\n- /kit\n- /heal", price:10000},
+{name:"VIP", desc:"Rank VIP\nFitur:\n- /fly\n- /nick\n- Sethome 7", price:20000},
+{name:"MVP", desc:"Rank MVP Full Power\nFitur:\n- Semua fitur VIP\n- Vault 5", price:30000}
+];
+
+if(!localStorage.getItem("products"))
+localStorage.setItem("products",JSON.stringify(defaultProducts));
+
+if(!localStorage.getItem("transactions"))
+localStorage.setItem("transactions",JSON.stringify([]));
+
+/* SECRET ADMIN */
+document.getElementById("secretHeader").addEventListener("click", function(){
+clickCount++;
+if(clickCount >= 5){
+clickCount = 0;
+adminLogin();
+}
+});
+
+function adminLogin(){
+let pass = prompt("Masukkan Password Admin:");
+if(pass === adminPass){
+adminPanel();
+}else if(pass !== null){
+alert("Password salah!");
+}
+}
+
+/* STORE */
+function loadStore(){
+let store = document.getElementById("store");
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let html = `<div class="products-grid">`;
+
+products.forEach((p,i)=>{
+html+=`
+<div class="product-card">
+<div>
+<div class="product-title">${p.name}</div>
+<div class="product-desc">${p.desc}</div>
+<div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
+</div>
+<button class="product-btn" onclick="buyForm(${i})">Buy</button>
+</div>`;
+});
+
+html+=`</div>`;
+store.innerHTML = html;
+}
+
+/* BUY */
+function buyForm(index){
+let products = JSON.parse(localStorage.getItem("products"));
+selectedProduct = products[index];
+
+document.getElementById("store").innerHTML=`
+<div class="card">
+<h3>Beli ${selectedProduct.name}</h3>
+<input id="mc" placeholder="Nama Minecraft">
+<input id="wa" placeholder="Nomor WhatsApp">
+<button class="buy-btn" onclick="showQRIS()">Lanjut Pembayaran</button>
+<button onclick="loadStore()">Batal</button>
+</div>`;
+}
+
+function showQRIS(){
+let mc = document.getElementById("mc").value;
+let wa = document.getElementById("wa").value;
+
+if(!mc || !wa){
+alert("Isi semua data!");
+return;
+}
+
+buyerData = {mc, wa};
+
+document.getElementById("store").innerHTML=`
+<div class="card">
+<h3>Scan QRIS Untuk Bayar</h3>
+<p>Total: Rp ${Number(selectedProduct.price).toLocaleString()}</p>
+<p class="warning">⚠️ Setelah bayar WAJIB screenshot bukti transfer.</p>
+<button class="buy-btn" onclick="confirmPayment()">Saya Sudah Bayar</button>
+<button onclick="loadStore()">Batal</button>
+</div>`;
+}
+
+function confirmPayment(){
+let id = "RTRX-"+Math.floor(Math.random()*1000000);
+let date = new Date().toLocaleString();
+
+let transaksi = {
+id,
+produk:selectedProduct.name,
+tanggal:date,
+mc:buyerData.mc,
+wa:buyerData.wa,
+harga:selectedProduct.price,
+status:"🟡 Menunggu Pesanan"
+};
+
+let all = JSON.parse(localStorage.getItem("transactions"));
+all.push(transaksi);
+localStorage.setItem("transactions",JSON.stringify(all));
+
+alert("Pesanan berhasil dikirim!");
+loadStore();
+}
+
+/* ================= ADMIN PANEL ================= */
+
+function adminPanel(){
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let transaksi = JSON.parse(localStorage.getItem("transactions")) || [];
+
+let html=`
+<div class="card">
+<h2>⚙️ ADMIN PANEL</h2>
+<button onclick="loadStore()">🏪 Kembali</button>
+<button onclick="logoutAdmin()" style="background:#ff4d4d;color:white;">🚪 Logout</button>
+</div>
+
+<div class="card">
+<h3>➕ Tambah Produk</h3>
+<input id="pn" placeholder="Nama Produk">
+<textarea id="pd" rows="4" placeholder="Deskripsi"></textarea>
+<input id="pp" type="number" placeholder="Harga">
+<button class="buy-btn" onclick="addProduct()">Tambah Produk</button>
+</div>
+
+<div class="card"><h3>📦 Daftar Produk</h3>
+`;
+
+if(products.length === 0){
+html+=`<p>Belum ada produk.</p>`;
+}else{
+products.forEach((p,i)=>{
+html+=`
+<div style="border-bottom:1px solid #00f7ff;padding:10px 0;">
+<input type="text" id="editName${i}" value="${p.name}">
+<textarea id="editDesc${i}" rows="3">${p.desc}</textarea>
+<input type="number" id="editPrice${i}" value="${p.price}">
+<br>
+<button onclick="saveEdit(${i})">💾 Simpan</button>
+<button onclick="deleteProduct(${i})" style="background:#ff4d4d;color:white;">🗑 Hapus</button>
+</div>`;
+});
+}
+
+html+=`</div><div class="card"><h3>🧾 Transaksi (${transaksi.length})</h3>`;
+
+if(transaksi.length===0){
+html+=`<p>Belum ada transaksi.</p>`;
+}else{
+transaksi.forEach((t,i)=>{
+html+=`
+<div style="border-bottom:1px solid #00f7ff;padding:10px 0;text-align:left;">
+<b>ID:</b> ${t.id}<br>
+<b>MC:</b> ${t.mc}<br>
+<b>Produk:</b> ${t.produk}<br>
+<b>Status:</b> ${t.status}<br>
+${t.status.includes("Menunggu")?`<button onclick="markDone(${i})">✅ Selesai</button>`:""}
+<button onclick="deleteTransaction(${i})" style="background:#ff4d4d;color:white;">🗑 Hapus</button>
+</div>`;
+});
+}
+
+html+=`</div>`;
+
+document.getElementById("store").innerHTML=html;
+}
+
+function addProduct(){
+let name=document.getElementById("pn").value.trim();
+let desc=document.getElementById("pd").value.trim();
+let price=parseInt(document.getElementById("pp").value);
+
+if(!name || !desc || isNaN(price) || price<=0){
+alert("Isi data dengan benar!");
+return;
+}
+
+let products=JSON.parse(localStorage.getItem("products"));
+products.push({name,desc,price});
+localStorage.setItem("products",JSON.stringify(products));
+adminPanel();
+}
+
+function saveEdit(index){
+let products=JSON.parse(localStorage.getItem("products"));
+let newPrice=parseInt(document.getElementById(`editPrice${index}`).value);
+
+if(isNaN(newPrice) || newPrice<=0){
+alert("Harga tidak valid!");
+return;
+}
+
+products[index].name=document.getElementById(`editName${index}`).value;
+products[index].desc=document.getElementById(`editDesc${index}`).value;
+products[index].price=newPrice;
+
+localStorage.setItem("products",JSON.stringify(products));
+adminPanel();
+}
+
+function deleteProduct(i){
+if(!confirm("Yakin hapus produk?")) return;
+let products=JSON.parse(localStorage.getItem("products"));
+products.splice(i,1);
+localStorage.setItem("products",JSON.stringify(products));
+adminPanel();
+}
+
+function markDone(i){
+let transaksi=JSON.parse(localStorage.getItem("transactions"));
+transaksi[i].status="🟢 Pesanan Selesai";
+localStorage.setItem("transactions",JSON.stringify(transaksi));
+adminPanel();
+}
+
+function deleteTransaction(i){
+if(!confirm("Yakin hapus transaksi?")) return;
+let transaksi=JSON.parse(localStorage.getItem("transactions"));
+transaksi.splice(i,1);
+localStorage.setItem("transactions",JSON.stringify(transaksi));
+adminPanel();
+}
+
+function logoutAdmin(){
+alert("Logout berhasil!");
+loadStore();
+}
+
+loadStore();
+</script>
+</body>
+  </html>
