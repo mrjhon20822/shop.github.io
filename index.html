@@ -79,10 +79,8 @@ text-align:center;
 
 button{padding:10px 18px;border:none;border-radius:12px;cursor:pointer;font-weight:600;margin-top:10px;}
 .buy-btn{background:linear-gradient(90deg,#00f7ff,#8a2be2);color:white;}
-
-input, textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid rgba(0,255,255,0.4);background:rgba(255,255,255,0.05);color:white;outline:none;font-family:'Poppins',sans-serif;box-sizing:border-box;}
+input, textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid rgba(0,255,255,0.4);background:rgba(255,255,255,0.05);color:white;outline:none;font-family:'Poppins',sans-serif;}
 textarea{resize:none;}
-
 .qris-img{max-width:260px;margin-top:15px;border-radius:15px;box-shadow:0 0 25px #00f7ff;}
 .warning{color:#00f7ff;margin-top:12px;font-size:14px;}
 
@@ -111,148 +109,6 @@ text-shadow: 0 0 10px rgba(0, 251, 255, 0.4);
 .social-icons { text-align: center; margin-top: 40px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .social-icons a { background: #24143d; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border-radius: 50%; color: white; text-decoration: none; font-size: 20px; transition: 0.3s; }
 .social-icons a:hover { background: #00fbff; color: #0d061a; transform: translateY(-5px); box-shadow: 0 0 15px #00fbff; }
-
-/* ========== ADMIN PANEL STYLES ========== */
-.admin-badge {
-    background: linear-gradient(90deg, #ff6b6b, #ff4757);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
-}
-
-.admin-card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-    text-align: left;
-}
-
-.admin-card h4 {
-    margin: 0 0 15px 0;
-    color: #00f7ff;
-    font-size: 16px;
-}
-
-.admin-input {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,247,255,0.3);
-    background: rgba(0,0,0,0.4);
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.admin-input:focus {
-    border-color: #00f7ff;
-    box-shadow: 0 0 10px rgba(0,247,255,0.3);
-    outline: none;
-}
-
-.admin-textarea {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,247,255,0.3);
-    background: rgba(0,0,0,0.4);
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    resize: vertical;
-    min-height: 80px;
-    box-sizing: border-box;
-}
-
-.btn-save {
-    background: #2ecc71;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 8px;
-}
-
-.btn-delete {
-    background: #e74c3c;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.btn-done {
-    background: #00f7ff;
-    color: #0d061a;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 8px;
-}
-
-.btn-back {
-    background: #6c5ce7;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 15px;
-    margin-top: 20px;
-}
-
-.transaksi-item {
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 4px solid #00f7ff;
-}
-
-.transaksi-item.selesai {
-    border-left-color: #2ecc71;
-    opacity: 0.8;
-}
-
-.status-menunggu { color: #f1c40f; }
-.status-selesai { color: #2ecc71; }
-
-.stats-box {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-}
-
-.stat-card h3 { margin: 0; font-size: 28px; }
-.stat-card p { margin: 5px 0 0 0; opacity: 0.9; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -311,7 +167,7 @@ let defaultProducts = [
 if(!localStorage.getItem("products")) localStorage.setItem("products",JSON.stringify(defaultProducts));
 if(!localStorage.getItem("transactions")) localStorage.setItem("transactions",JSON.stringify([]));
 
-/* FITUR RAHASIA ADMIN */
+/* FITUR RAHASIA ADMIN - KLIK HEADER 5X */
 document.getElementById("secretHeader").addEventListener("click", function(){
     clickCount++;
     if(clickCount >= 5){ 
@@ -366,14 +222,6 @@ function buyForm(index){
 }
 
 function showQRIS(){
-    let mc = document.getElementById("mc").value;
-    let wa = document.getElementById("wa").value;
-    if(!mc || !wa){ alert("Isi semua data!"); return; }
-    buyerData = {mc, wa};
-    let qrisSrc = "https://files.catbox.moe/fkxzic.jpeg";
-
-    document.getElementById
-  function showQRIS(){
     let mc = document.getElementById("mc").value;
     let wa = document.getElementById("wa").value;
     if(!mc || !wa){ alert("Isi semua data!"); return; }
@@ -449,195 +297,73 @@ function adminPanel(){
     let products = JSON.parse(localStorage.getItem("products"));
     let transaksi = JSON.parse(localStorage.getItem("transactions"));
     
-    // Hitung statistik
     let menunggu = transaksi.filter(t => t.status.includes("Menunggu")).length;
     let selesai = transaksi.filter(t => t.status.includes("Selesai")).length;
-    let totalPendapatan = transaksi
-        .filter(t => t.status.includes("Selesai"))
-        .reduce((sum, t) => sum + t.harga, 0);
+    let totalPendapatan = transaksi.filter(t => t.status.includes("Selesai")).reduce((sum, t) => sum + t.harga, 0);
     
     let html = `
-    <div class="admin-badge">
+    <div style="background:linear-gradient(90deg,#ff6b6b,#ff4757);padding:12px 25px;border-radius:25px;display:inline-block;margin-bottom:20px;font-weight:600;">
         <i class="fas fa-shield-alt"></i> MODE ADMIN
     </div>
     
-    <!-- Statistik -->
-    <div class="stats-box">
-        <div class="stat-card">
-            <h3>${products.length}</h3>
-            <p>Produk</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:25px;">
+        <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:18px;border-radius:15px;text-align:center;">
+            <h3 style="margin:0;font-size:26px;">${products.length}</h3>
+            <p style="margin:5px 0 0 0;font-size:12px;opacity:0.9;">Produk</p>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-            <h3>${transaksi.length}</h3>
-            <p>Total Transaksi</p>
+        <div style="background:linear-gradient(135deg,#f093fb,#f5576c);padding:18px;border-radius:15px;text-align:center;">
+            <h3 style="margin:0;font-size:26px;">${transaksi.length}</h3>
+            <p style="margin:5px 0 0 0;font-size:12px;opacity:0.9;">Transaksi</p>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #fa709a, #fee140);">
-            <h3>${menunggu}</h3>
-            <p>Menunggu</p>
+        <div style="background:linear-gradient(135deg,#fa709a,#fee140);padding:18px;border-radius:15px;text-align:center;">
+            <h3 style="margin:0;font-size:26px;">${menunggu}</h3>
+            <p style="margin:5px 0 0 0;font-size:12px;opacity:0.9;">Menunggu</p>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #30cfd0, #330867);">
-            <h3>${selesai}</h3>
-            <p>Selesai</p>
+        <div style="background:linear-gradient(135deg,#30cfd0,#330867);padding:18px;border-radius:15px;text-align:center;">
+            <h3 style="margin:0;font-size:26px;">${selesai}</h3>
+            <p style="margin:5px 0 0 0;font-size:12px;opacity:0.9;">Selesai</p>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
-            <h3>Rp${totalPendapatan.toLocaleString()}</h3>
-            <p>Pendapatan</p>
+        <div style="background:linear-gradient(135deg,#a8edea,#fed6e3);padding:18px;border-radius:15px;text-align:center;">
+            <h3 style="margin:0;font-size:16px;color:#333;">Rp${totalPendapatan.toLocaleString()}</h3>
+            <p style="margin:5px 0 0 0;font-size:12px;opacity:0.8;color:#333;">Pendapatan</p>
         </div>
     </div>
     
-    <!-- Tambah Produk -->
     <div class="card">
-        <h3>➕ Tambah Produk Baru</h3>
-        <input class="admin-input" id="pn" placeholder="Nama Produk">
-        <textarea class="admin-textarea" id="pd" rows="3" placeholder="Deskripsi (bisa Enter)"></textarea>
-        <input class="admin-input" id="pp" type="number" placeholder="Harga (angka saja)">
-        <button class="btn-save" onclick="addProduct()">
-            <i class="fas fa-plus"></i> Tambah Produk
-        </button>
-    </div>
-    
-    <!-- Daftar Produk -->
-    <div class="card">
-        <h3>📦 Daftar Produk (${products.length})</h3>
+        <h3>➕ Tambah Produk</h3>
+        <input id="pn" placeholder="Nama Produk">
+        <textarea id="pd" rows="3" placeholder="Deskripsi"></textarea>
+        <input id="pp" type="number" placeholder="Harga">
+        <button class="buy-btn" onclick="addProduct()">Tambah</button>
     </div>`;
 
-    if(products.length === 0){
-        html += `<div class="card"><p>Belum ada produk. Tambahkan produk di atas!</p></div>`;
-    } else {
-        products.forEach((p, i) => {
-            html += `
-            <div class="admin-card">
-                <h4>Produk #${i + 1}</h4>
-                <input class="admin-input" id="editName${i}" value="${p.name}" placeholder="Nama Produk">
-                <textarea class="admin-textarea" id="editDesc${i}" rows="3">${p.desc}</textarea>
-                <input class="admin-input" id="editPrice${i}" type="number" value="${p.price}" placeholder="Harga">
-                <div style="margin-top: 10px;">
-                    <button class="btn-save" onclick="saveEdit(${i})">
-                        <i class="fas fa-save"></i> Simpan
-                    </button>
-                    <button class="btn-delete" onclick="deleteProduct(${i})">
-                        <i class="fas fa-trash"></i> Hapus
-                    </button>
-                </div>
-            </div>`;
-        });
-    }
-
-    // Daftar Transaksi
-    html += `
-    <div class="card">
-        <h3>📋 Riwayat Transaksi (${transaksi.length})</h3>
-    </div>`;
-    
-    if(transaksi.length === 0){
-        html += `<div class="card"><p>Belum ada transaksi.</p></div>`;
-    } else {
-        // Urutkan: yang terbaru di atas
-        transaksi.reverse().forEach((t, i) => {
-            let isSelesai = t.status.includes("Selesai");
-            html += `
-            <div class="transaksi-item ${isSelesai ? 'selesai' : ''}">
-                <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:10px;">
-                    <div>
-                        <b>ID:</b> ${t.id}<br>
-                        <b>Nama MC:</b> ${t.mc}<br>
-                        <b>WhatsApp:</b> ${t.wa}<br>
-                        <b>Produk:</b> ${t.produk}<br>
-                        <b>Harga:</b> Rp${t.harga.toLocaleString()}<br>
-                        <b>Tanggal:</b> ${t.tanggal}<br>
-                        <b>Status:</b> <span class="${isSelesai ? 'status-selesai' : 'status-menunggu'}">${t.status}</span>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:5px;">
-                        ${!isSelesai ? `<button class="btn-done" onclick="markDone(${transaksi.length - 1 - i})"><i class="fas fa-check"></i> Selesai</button>` : ''}
-                        <button class="btn-delete" onclick="deleteTransaction(${transaksi.length - 1 - i})"><i class="fas fa-trash"></i> Hapus</button>
-                    </div>
-                </div>
-            </div>`;
-        });
-    }
-
-    html += `
-    <div style="text-align:center;">
-        <button class="btn-back" onclick="loadStore()">
-            <i class="fas fa-arrow-left"></i> Kembali ke Toko
-        </button>
-    </div>`;
-    
-    document.getElementById("store").innerHTML = html;
+    products.forEach((p,i)=>{
+        html+=`
+        <div class="card" style="text-align:left">
+            <b>
+            html+=`<div class="card"><h3>📋 Riwayat Transaksi (${transaksi.length})</h3>`;
+if(transaksi.length===0){
+    html+=`<p>Belum ada transaksi.</p>`;
+}else{
+    transaksi.reverse().forEach((t,i)=>{
+        let isSelesai = t.status.includes("Selesai");
+        html+=`
+        <div style="text-align:left; border-bottom:1px solid #00f7ff; padding:12px 0;${isSelesai ? 'opacity:0.7;' : ''}">
+            <b>ID:</b> ${t.id}<br>
+            <b>Nama MC:</b> ${t.mc}<br>
+            <b>WA:</b> ${t.wa}<br>
+            <b>Produk:</b> ${t.produk}<br>
+            <b>Harga:</b> Rp${t.harga.toLocaleString()}<br>
+            <b>Tanggal:</b> ${t.tanggal}<br>
+            <b>Status:</b> <span style="color:${isSelesai ? '#2ecc71' : '#f1c40f'}">${t.status}</span><br>
+            ${!isSelesai ? `<button onclick="markDone(${transaksi.length-1-i})" style="background:#00f7ff;color:#000;">Tandai Selesai</button>` : ''}
+            <button onclick="deleteTransaction(${transaksi.length-1-i})" style="background:#e74c3c;color:white;">Hapus</button>
+        </div>`;
+    });
 }
-
-function addProduct(){
-    let name = document.getElementById("pn").value.trim();
-    let desc = document.getElementById("pd").value.trim();
-    let price = parseInt(document.getElementById("pp").value);
-    
-    if(!name || !desc || !price || isNaN(price)){
-        alert("Mohon isi semua data dengan benar!");
-        return;
-    }
-    
-    let products = JSON.parse(localStorage.getItem("products"));
-    products.push({name, desc, price});
-    localStorage.setItem("products", JSON.stringify(products));
-    
-    alert("Produk berhasil ditambahkan!");
-    adminPanel();
-}
-
-function saveEdit(index){
-    let products = JSON.parse(localStorage.getItem("products"));
-    let newName = document.getElementById(`editName${index}`).value.trim();
-    let newDesc = document.getElementById(`editDesc${index}`).value.trim();
-    let newPrice = parseInt(document.getElementById(`editPrice${index}`).value);
-    
-    if(!newName || !newDesc || !newPrice || isNaN(newPrice)){
-        alert("Mohon isi semua data dengan benar!");
-        return;
-    }
-    
-    products[index].name = newName;
-    products[index].desc = newDesc;
-    products[index].price = newPrice;
-    localStorage.setItem("products", JSON.stringify(products));
-    
-    alert("Produk berhasil disimpan!");
-    adminPanel();
-}
-
-function deleteProduct(index){
-    if(!confirm("⚠️ Yakin ingin menghapus produk ini? Data tidak bisa dikembalikan!")){
-        return;
-    }
-    
-    let products = JSON.parse(localStorage.getItem("products"));
-    products.splice(index, 1);
-    localStorage.setItem("products", JSON.stringify(products));
-    
-    alert("Produk berhasil dihapus!");
-    adminPanel();
-}
-
-function markDone(index){
-    let transaksi = JSON.parse(localStorage.getItem("transactions"));
-    transaksi[index].status = "🟢 Pesanan Selesai";
-    localStorage.setItem("transactions", JSON.stringify(transaksi));
-    adminPanel();
-}
-
-function deleteTransaction(index){
-    if(!confirm("⚠️ Yakin ingin menghapus transaksi ini? Data tidak bisa dikembalikan!")){
-        return;
-    }
-    
-    let transaksi = JSON.parse(localStorage.getItem("transactions"));
-    transaksi.splice(index, 1);
-    localStorage.setItem("transactions", JSON.stringify(transaksi));
-    
-    alert("Transaksi berhasil dihapus!");
-    adminPanel();
-}
-
-loadStore();
+html+=`</div><button onclick="loadStore()" style="background:#6c5ce7;color:white;padding:12px 25px;font-size:15px;">Kembali ke Toko</button>`;
+document.getElementById("store").innerHTML=html;
+    loadStore();
 </script>
 </body>
 </html>
