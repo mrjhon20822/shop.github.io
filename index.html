@@ -263,7 +263,9 @@ function deleteTransaction(index){
     localStorage.setItem("transactions",JSON.stringify(transactions));
     adminPanel();
     } 
+    window.onload = function(){
     loadStore();
+                         }
 </script>
 </body>
 </html>
