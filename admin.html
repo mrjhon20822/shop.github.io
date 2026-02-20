@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Ratarasmp</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Admin Panel</title>
+
 <style>
 body{
     margin:0;
-    font-family:'Poppins',sans-serif;
+    font-family:Poppins, sans-serif;
     background:linear-gradient(135deg,#140f2d,#1c1340,#0f0a25);
     color:white;
 }
+
 .container{
-    max-width:1000px;
+    max-width:900px;
     margin:auto;
     padding:20px;
 }
+
 .card{
     background:#181828;
     border:1px solid #2a2a4a;
@@ -24,11 +26,10 @@ body{
     padding:20px;
     margin-bottom:20px;
 }
-h1{
-    text-align:center;
-    margin-top:20px;
-}
-input,textarea{
+
+h1{text-align:center;}
+
+input, textarea{
     width:100%;
     padding:10px;
     margin:5px 0;
@@ -37,35 +38,38 @@ input,textarea{
     background:#111;
     color:white;
 }
+
 button{
     padding:8px 15px;
     border:none;
     border-radius:8px;
     cursor:pointer;
-    margin-top:5px;
+    margin:5px 3px;
     font-weight:600;
 }
+
 .btn{
     background:linear-gradient(90deg,#00f7ff,#8a2be2);
     color:white;
 }
+
 .danger{
     background:#ff3b3b;
     color:white;
 }
-.back{
-    background:#444;
-    color:white;
+
+.status{
+    font-weight:bold;
 }
-hr{border:1px solid #333;}
 </style>
 </head>
 <body>
 
 <div class="container">
+
 <h1>🛠 ADMIN PANEL</h1>
 
-<button class="back" onclick="window.location.href='shop.html'">⬅ Balik ke Store</button>
+<button onclick="window.location.href='/'">⬅ Balik ke Store</button>
 
 <div class="card">
 <h2>📦 Tambah Produk</h2>
@@ -89,17 +93,18 @@ hr{border:1px solid #333;}
 
 <script>
 
-// Password sederhana
+// PASSWORD
 let pass = prompt("Masukkan Password Admin:");
 if(pass !== "rataradev"){
     alert("Akses Ditolak!");
-    window.location.href = "shop.html";
+    window.location.href = "/";
 }
 
-// Load data
+// DATA
 let products = JSON.parse(localStorage.getItem("products")) || [];
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
+// SAVE
 function saveProducts(){
     localStorage.setItem("products", JSON.stringify(products));
 }
@@ -108,9 +113,11 @@ function saveTransactions(){
     localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
+// ================= PRODUK =================
+
 function addProduct(){
-    let name = document.getElementById("name").value;
-    let desc = document.getElementById("desc").value;
+    let name = document.getElementById("name").value.trim();
+    let desc = document.getElementById("desc").value.trim();
     let price = parseInt(document.getElementById("price").value);
 
     if(!name || !desc || !price){
@@ -121,62 +128,110 @@ function addProduct(){
     products.push({name,desc,price});
     saveProducts();
     renderProducts();
+
+    document.getElementById("name").value="";
+    document.getElementById("desc").value="";
+    document.getElementById("price").value="";
 }
 
 function deleteProduct(i){
-    products.splice(i,1);
+    if(confirm("Yakin hapus produk ini?")){
+        products.splice(i,1);
+        saveProducts();
+        renderProducts();
+    }
+}
+
+function editProduct(i){
+    let p = products[i];
+
+    let newName = prompt("Edit Nama:", p.name);
+    if(newName===null) return;
+
+    let newDesc = prompt("Edit Deskripsi:", p.desc);
+    if(newDesc===null) return;
+
+    let newPrice = prompt("Edit Harga:", p.price);
+    if(newPrice===null) return;
+
+    products[i] = {
+        name:newName.trim(),
+        desc:newDesc.trim(),
+        price:parseInt(newPrice)
+    };
+
     saveProducts();
     renderProducts();
 }
 
+function renderProducts(){
+    let html="";
+
+    if(products.length===0){
+        html="Belum ada produk.";
+    } else {
+        products.forEach((p,i)=>{
+            html+=`
+            <div>
+                <b>${p.name}</b><br>
+                ${p.desc}<br>
+                Rp${p.price.toLocaleString()}<br>
+                <button onclick="editProduct(${i})">Edit</button>
+                <button class="danger" onclick="deleteProduct(${i})">Hapus</button>
+            </div><hr>
+            `;
+        });
+    }
+
+    document.getElementById("productList").innerHTML=html;
+}
+
+// ================= TRANSAKSI =================
+
 function updateStatus(i,status){
-    transactions[i].status = status;
+    transactions[i].status=status;
     saveTransactions();
     renderTransactions();
 }
 
 function deleteTransaction(i){
-    transactions.splice(i,1);
-    saveTransactions();
-    renderTransactions();
-}
-
-function renderProducts(){
-    let html="";
-    products.forEach((p,i)=>{
-        html+=`
-        <div style="margin-bottom:10px;">
-        <b>${p.name}</b> - Rp${p.price.toLocaleString()} 
-        <button class="danger" onclick="deleteProduct(${i})">Hapus</button>
-        </div><hr>
-        `;
-    });
-    document.getElementById("productList").innerHTML = html;
+    if(confirm("Yakin hapus transaksi ini?")){
+        transactions.splice(i,1);
+        saveTransactions();
+        renderTransactions();
+    }
 }
 
 function renderTransactions(){
     let html="";
+
     if(transactions.length===0){
         html="Belum ada transaksi.";
     } else {
         transactions.forEach((t,i)=>{
+
+            let status=t.status || "🟡 Menunggu Admin";
+
             html+=`
-            <div style="margin-bottom:10px;">
-            <b>${t.id}</b><br>
-            ${t.produk} - Rp${t.harga.toLocaleString()}<br>
-            MC: ${t.mc}<br>
-            WA: ${t.wa}<br>
-            Status: ${t.status}<br>
-            <button class="btn" onclick="updateStatus(${i},'🟢 Selesai')">Selesai</button>
-            <button class="danger" onclick="updateStatus(${i},'🔴 Dibatalkan')">Batalkan</button>
-            <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
+            <div>
+                <b>${t.id || "TRX-"+(i+1)}</b><br>
+                ${t.produk || "-"}<br>
+                Rp${(t.harga||0).toLocaleString()}<br>
+                MC: ${t.mc || "-"}<br>
+                WA: ${t.wa || "-"}<br>
+                <span class="status">${status}</span><br>
+                <button onclick="updateStatus(${i},'🟢 Pesanan Selesai')">Selesai</button>
+                <button onclick="updateStatus(${i},'🟡 Menunggu Admin')">Menunggu</button>
+                <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
             </div><hr>
             `;
         });
     }
-    document.getElementById("transactionList").innerHTML = html;
+
+    document.getElementById("transactionList").innerHTML=html;
 }
 
+// INIT
 renderProducts();
 renderTransactions();
 
