@@ -54,21 +54,24 @@ textarea{resize:none;}
 <li>Auction House</li>
 <li>Fishing</li>
 <li>Dll</li>
-</ul>
-<div style="text-align:center; margin-top:40px;">
-<h2 style="display:inline-block;">Media Social</h2>
-<div class="social-icons">
-<a href="https://tiktok.com/@ratara.smp" target="_blank"><i class="fab fa-tiktok"></i></a>
-<a href="https://discord.gg/FyT5eZXPnh" target="_blank"><i class="fab fa-discord"></i></a>
-<a href="https://linktr.ee/ratarasmp" target="_blank"><i class="fas fa-globe"></i></a>
-<a href="https://chat.whatsapp.com/F7QL2jqqWLVLqv5TCL42AK?mode=gi_t" target="_blank"><i class="fab fa-whatsapp"></i></a>
-<a href="https://mrjhonmc.web.id/shop.github.io" target="_blank"><i class="fas fa-shopping-cart"></i></a>
-<a href="mailto:ratarasmp@gmail.com"><i class="fas fa-envelope"></i></a>
+</ul>     
+    <div class="info-box">
+            <div class="info-title">Media Social</div>
+            <div class="media-grid">
+                <a href="https://tiktok.com/@ratara.smp" target="_blank" class="media-icon"><i class="fab fa-tiktok"></i></a>
+                <a href="https://discord.gg/FyT5eZXPnh" target="_blank" class="media-icon"><i class="fab fa-discord"></i></a>
+                <a href="https://linktr.ee/ratarasmp" target="_blank" class="media-icon"><i class="fas fa-globe"></i></a>
+                <a href="https://chat.whatsapp.com/F7QL2jqqWLVLqv5TCL42AK?mode=gi_t" target="_blank" class="media-icon"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://mrjhonmc.web.id/kasir.github.io" target="_blank" class="media-icon"><i class="fas fa-shopping-cart"></i></a>
+                <a href="mailto:ratarasmp@gmail.com" target="_blank" class="media-icon"><i class="fas fa-envelope"></i></a>
+                <button class="media-icon" onclick="openVote()"><i class="fas fa-check-to-slot"></i></button>
+            </div>
+        </div>
+    </div>
+    <footer>© 2026 Mrjhon Mc</footer>
 </div>
-</div>
-<p style="text-align:center; font-size:12px; color:#666; margin-top:30px;">© 2026 Mrjhon Mc</p>
-</div>
-    <div id="modalVote" class="vote-modal" onclick="closeVote(event)">
+
+<div id="modalVote" class="vote-modal" onclick="closeVote(event)">
     <div class="vote-box">
         <h3 style="color:#00f7ff; margin-bottom:10px;">Vote Server</h3>
         <p style="font-size: 13px; opacity: 0.8; margin-bottom: 20px;">Pilih link vote di bawah ini:</p>
@@ -81,7 +84,7 @@ textarea{resize:none;}
 <script>
 function openVote() { document.getElementById('modalVote').style.display = 'flex'; }
 function closeVote(e) { if(e.target.id === 'modalVote') document.getElementById('modalVote').style.display = 'none'; }
-</div>
+    
 <script>
 let seller = "6285143590943";
 let selectedProduct = null;
