@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Ratarasmp</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#140f2d,#1c1340,#0f0a25);
+    color:white;
+}
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+.card{
+    background:#181828;
+    border:1px solid #2a2a4a;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+}
+h1{
+    text-align:center;
+    margin-top:20px;
+}
+input,textarea{
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border-radius:10px;
+    border:1px solid #00f7ff;
+    background:#111;
+    color:white;
+}
+button{
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:5px;
+    font-weight:600;
+}
+.btn{
+    background:linear-gradient(90deg,#00f7ff,#8a2be2);
+    color:white;
+}
+.danger{
+    background:#ff3b3b;
+    color:white;
+}
+.back{
+    background:#444;
+    color:white;
+}
+hr{border:1px solid #333;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🛠 ADMIN PANEL</h1>
+
+<button class="back" onclick="window.location.href='shop.html'">⬅ Balik ke Store</button>
+
+<div class="card">
+<h2>📦 Tambah Produk</h2>
+<input id="name" placeholder="Nama Produk">
+<textarea id="desc" placeholder="Deskripsi"></textarea>
+<input id="price" type="number" placeholder="Harga">
+<button class="btn" onclick="addProduct()">Tambah</button>
+</div>
+
+<div class="card">
+<h2>📦 Daftar Produk</h2>
+<div id="productList"></div>
+</div>
+
+<div class="card">
+<h2>🧾 Transaksi</h2>
+<div id="transactionList"></div>
+</div>
+
+</div>
+
+<script>
+
+// Password sederhana
+let pass = prompt("Masukkan Password Admin:");
+if(pass !== "rataradev"){
+    alert("Akses Ditolak!");
+    window.location.href = "shop.html";
+}
+
+// Load data
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+function saveProducts(){
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+function saveTransactions(){
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+function addProduct(){
+    let name = document.getElementById("name").value;
+    let desc = document.getElementById("desc").value;
+    let price = parseInt(document.getElementById("price").value);
+
+    if(!name || !desc || !price){
+        alert("Isi semua data!");
+        return;
+    }
+
+    products.push({name,desc,price});
+    saveProducts();
+    renderProducts();
+}
+
+function deleteProduct(i){
+    products.splice(i,1);
+    saveProducts();
+    renderProducts();
+}
+
+function updateStatus(i,status){
+    transactions[i].status = status;
+    saveTransactions();
+    renderTransactions();
+}
+
+function deleteTransaction(i){
+    transactions.splice(i,1);
+    saveTransactions();
+    renderTransactions();
+}
+
+function renderProducts(){
+    let html="";
+    products.forEach((p,i)=>{
+        html+=`
+        <div style="margin-bottom:10px;">
+        <b>${p.name}</b> - Rp${p.price.toLocaleString()} 
+        <button class="danger" onclick="deleteProduct(${i})">Hapus</button>
+        </div><hr>
+        `;
+    });
+    document.getElementById("productList").innerHTML = html;
+}
+
+function renderTransactions(){
+    let html="";
+    if(transactions.length===0){
+        html="Belum ada transaksi.";
+    } else {
+        transactions.forEach((t,i)=>{
+            html+=`
+            <div style="margin-bottom:10px;">
+            <b>${t.id}</b><br>
+            ${t.produk} - Rp${t.harga.toLocaleString()}<br>
+            MC: ${t.mc}<br>
+            WA: ${t.wa}<br>
+            Status: ${t.status}<br>
+            <button class="btn" onclick="updateStatus(${i},'🟢 Selesai')">Selesai</button>
+            <button class="danger" onclick="updateStatus(${i},'🔴 Dibatalkan')">Batalkan</button>
+            <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
+            </div><hr>
+            `;
+        });
+    }
+    document.getElementById("transactionList").innerHTML = html;
+}
+
+renderProducts();
+renderTransactions();
+
+</script>
+
+</body>
+</html>
