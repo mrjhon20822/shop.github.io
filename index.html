@@ -73,10 +73,8 @@ textarea{resize:none;}
 </div>
 <script>
 let seller = "6285143590943";
-let adminPass = "rataradev";
 let selectedProduct = null;
 let buyerData = {};
-let clickCount = 0;
 
 let defaultProducts = [
     {name:"Fruzy", desc:"Rank Fruzy Basic\nFitur:\n- /kit\n- /heal", price:10000},
@@ -86,23 +84,6 @@ let defaultProducts = [
 
 if(!localStorage.getItem("products")) localStorage.setItem("products",JSON.stringify(defaultProducts));
 if(!localStorage.getItem("transactions")) localStorage.setItem("transactions",JSON.stringify([]));
-
-document.getElementById("secretHeader").addEventListener("click", function(){
-    clickCount++;
-    if(clickCount >= 5){ 
-        clickCount = 0; 
-        adminLogin(); 
-    }
-});
-
-function adminLogin(){
-    let pass = prompt("Masukkan Password Admin:");
-    if(pass === adminPass){
-        adminPanel();
-    } else if (pass !== null) {
-        alert("Password salah!");
-    }
-}
 
 function loadStore(){
     document.getElementById("about-section").style.display = "block";
@@ -165,106 +146,7 @@ function showStruk(t){
     let encoded = encodeURIComponent(pesan);
     document.getElementById("store").innerHTML=`<div class="card"><h3>🧾 STRUK PEMBELIAN</h3><pre style="text-align:left">====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\nStatus: ${t.status}\n====================</pre><button class="buy-btn" onclick="window.open('https://wa.me/${seller}?text=${encoded}','_blank')">Kirim Bukti ke Seller</button><button onclick="loadStore()">Kembali</button></div>`;
 }
-function adminPanel(){
-    document.getElementById("about-section").style.display = "none";
-    let products = JSON.parse(localStorage.getItem("products"));
-    let transactions = JSON.parse(localStorage.getItem("transactions"));
-
-    let html = `
-    <div class="card">
-        <h2>🔐 ADMIN PANEL</h2>
-        <button onclick="loadStore()">⬅ Kembali ke Store</button>
-    </div>
-
-    <div class="card">
-        <h3>📦 Kelola Produk</h3>
-        <input id="pname" placeholder="Nama Produk">
-        <textarea id="pdesc" placeholder="Deskripsi Produk"></textarea>
-        <input id="pprice" type="number" placeholder="Harga Produk">
-        <button class="buy-btn" onclick="addProduct()">Tambah Produk</button>
-        <hr style="margin:20px 0;">
-    `;
-
-    products.forEach((p,i)=>{
-        html+=`
-        <div style="margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;">
-            <b>${p.name}</b> - Rp${p.price.toLocaleString()}
-            <br>
-            <button onclick="deleteProduct(${i})">❌ Hapus</button>
-        </div>
-        `;
-    });
-
-    html+=`</div>`;
-
-    html+=`
-    <div class="card">
-        <h3>🧾 Data Transaksi</h3>
-    `;
-
-    if(transactions.length === 0){
-        html+=`<p>Belum ada transaksi.</p>`;
-    } else {
-        transactions.forEach((t,i)=>{
-            html+=`
-            <div style="margin-bottom:15px; border-bottom:1px solid #444; padding-bottom:10px;">
-                <b>${t.id}</b><br>
-                ${t.produk} - Rp${t.harga.toLocaleString()}<br>
-                MC: ${t.mc} | WA: ${t.wa}<br>
-                Status: ${t.status}<br>
-                <button onclick="updateStatus(${i},'🟢 Selesai')">✔ Selesai</button>
-                <button onclick="updateStatus(${i},'🔴 Dibatalkan')">✖ Batalkan</button>
-                <button onclick="deleteTransaction(${i})">🗑 Hapus</button>
-            </div>
-            `;
-        });
-    }
-
-    html+=`</div>`;
-
-    document.getElementById("store").innerHTML = html;
-}
-
-function addProduct(){
-    let name = document.getElementById("pname").value;
-    let desc = document.getElementById("pdesc").value;
-    let price = parseInt(document.getElementById("pprice").value);
-
-    if(!name || !desc || !price){
-        alert("Isi semua data produk!");
-        return;
-    }
-
-    let products = JSON.parse(localStorage.getItem("products"));
-    products.push({name, desc, price});
-    localStorage.setItem("products",JSON.stringify(products));
-
-    adminPanel();
-}
-
-function deleteProduct(index){
-    let products = JSON.parse(localStorage.getItem("products"));
-    products.splice(index,1);
-    localStorage.setItem("products",JSON.stringify(products));
-    adminPanel();
-}
-
-function updateStatus(index,status){
-    let transactions = JSON.parse(localStorage.getItem("transactions"));
-    transactions[index].status = status;
-    localStorage.setItem("transactions",JSON.stringify(transactions));
-    adminPanel();
-}
-
-function deleteTransaction(index){
-    let transactions = JSON.parse(localStorage.getItem("transactions"));
-    transactions.splice(index,1);
-    localStorage.setItem("transactions",JSON.stringify(transactions));
-    adminPanel();
-    } 
-    window.onload = function(){
-    loadStore();
-                         }
+    
 </script>
 </body>
 </html>
