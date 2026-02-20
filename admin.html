@@ -12,13 +12,11 @@ body{
     background:linear-gradient(135deg,#140f2d,#1c1340,#0f0a25);
     color:white;
 }
-
 .container{
-    max-width:900px;
+    max-width:1000px;
     margin:auto;
     padding:20px;
 }
-
 .card{
     background:#181828;
     border:1px solid #2a2a4a;
@@ -26,19 +24,19 @@ body{
     padding:20px;
     margin-bottom:20px;
 }
-
 h1{text-align:center;}
-
 input, textarea{
     width:100%;
     padding:10px;
-    margin:5px 0;
+    margin:6px 0;
     border-radius:10px;
     border:1px solid #00f7ff;
     background:#111;
     color:white;
 }
-
+textarea{
+    resize:vertical;
+}
 button{
     padding:8px 15px;
     border:none;
@@ -47,19 +45,19 @@ button{
     margin:5px 3px;
     font-weight:600;
 }
-
 .btn{
     background:linear-gradient(90deg,#00f7ff,#8a2be2);
     color:white;
 }
-
 .danger{
     background:#ff3b3b;
     color:white;
 }
-
 .status{
     font-weight:bold;
+}
+hr{
+    border:1px solid #333;
 }
 </style>
 </head>
@@ -68,22 +66,26 @@ button{
 <div class="container">
 
 <h1>🛠 ADMIN PANEL</h1>
+<button onclick="window.location.href='https://mrjhonmc.web.id/shop.github.io'">
+⬅ Balik ke Store
+</button>
 
-<button onclick="window.location.href='/'">⬅ Balik ke Store</button>
-
+<!-- TAMBAH PRODUK -->
 <div class="card">
 <h2>📦 Tambah Produk</h2>
 <input id="name" placeholder="Nama Produk">
-<textarea id="desc" placeholder="Deskripsi"></textarea>
+<textarea id="desc" rows="4" placeholder="Deskripsi (bisa Enter ke bawah)"></textarea>
 <input id="price" type="number" placeholder="Harga">
-<button class="btn" onclick="addProduct()">Tambah</button>
+<button class="btn" onclick="addProduct()">Tambah Produk</button>
 </div>
 
+<!-- DAFTAR PRODUK -->
 <div class="card">
 <h2>📦 Daftar Produk</h2>
 <div id="productList"></div>
 </div>
 
+<!-- TRANSAKSI -->
 <div class="card">
 <h2>🧾 Transaksi</h2>
 <div id="transactionList"></div>
@@ -100,24 +102,23 @@ if(pass !== "rataradev"){
     window.location.href = "/";
 }
 
-// DATA
 let products = JSON.parse(localStorage.getItem("products")) || [];
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-// SAVE
 function saveProducts(){
     localStorage.setItem("products", JSON.stringify(products));
 }
-
 function saveTransactions(){
     localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-// ================= PRODUK =================
+// =======================
+// PRODUK
+// =======================
 
 function addProduct(){
     let name = document.getElementById("name").value.trim();
-    let desc = document.getElementById("desc").value.trim();
+    let desc = document.getElementById("desc").value; // newline tetap tersimpan
     let price = parseInt(document.getElementById("price").value);
 
     if(!name || !desc || !price){
@@ -134,34 +135,32 @@ function addProduct(){
     document.getElementById("price").value="";
 }
 
+function saveEdit(i){
+    let newName = document.getElementById("editName"+i).value;
+    let newDesc = document.getElementById("editDesc"+i).value;
+    let newPrice = parseInt(document.getElementById("editPrice"+i).value);
+
+    if(!newName || !newDesc || !newPrice){
+        alert("Data tidak boleh kosong!");
+        return;
+    }
+
+    products[i] = {
+        name:newName,
+        desc:newDesc,
+        price:newPrice
+    };
+
+    saveProducts();
+    renderProducts();
+}
+
 function deleteProduct(i){
     if(confirm("Yakin hapus produk ini?")){
         products.splice(i,1);
         saveProducts();
         renderProducts();
     }
-}
-
-function editProduct(i){
-    let p = products[i];
-
-    let newName = prompt("Edit Nama:", p.name);
-    if(newName===null) return;
-
-    let newDesc = prompt("Edit Deskripsi:", p.desc);
-    if(newDesc===null) return;
-
-    let newPrice = prompt("Edit Harga:", p.price);
-    if(newPrice===null) return;
-
-    products[i] = {
-        name:newName.trim(),
-        desc:newDesc.trim(),
-        price:parseInt(newPrice)
-    };
-
-    saveProducts();
-    renderProducts();
 }
 
 function renderProducts(){
@@ -172,24 +171,27 @@ function renderProducts(){
     } else {
         products.forEach((p,i)=>{
             html+=`
-            <div>
-                <b>${p.name}</b><br>
-                ${p.desc}<br>
-                Rp${p.price.toLocaleString()}<br>
-                <button onclick="editProduct(${i})">Edit</button>
+            <div style="margin-bottom:15px;">
+                <input id="editName${i}" value="${p.name}">
+                <textarea id="editDesc${i}" rows="4">${p.desc}</textarea>
+                <input id="editPrice${i}" type="number" value="${p.price}">
+                <button class="btn" onclick="saveEdit(${i})">Simpan</button>
                 <button class="danger" onclick="deleteProduct(${i})">Hapus</button>
-            </div><hr>
+            </div>
+            <hr>
             `;
         });
     }
 
-    document.getElementById("productList").innerHTML=html;
+    document.getElementById("productList").innerHTML = html;
 }
 
-// ================= TRANSAKSI =================
+// =======================
+// TRANSAKSI
+// =======================
 
 function updateStatus(i,status){
-    transactions[i].status=status;
+    transactions[i].status = status;
     saveTransactions();
     renderTransactions();
 }
@@ -210,25 +212,35 @@ function renderTransactions(){
     } else {
         transactions.forEach((t,i)=>{
 
-            let status=t.status || "🟡 Menunggu Admin";
+            let status = t.status || "🟡 Menunggu Admin";
 
             html+=`
-            <div>
-                <b>${t.id || "TRX-"+(i+1)}</b><br>
-                ${t.produk || "-"}<br>
-                Rp${(t.harga||0).toLocaleString()}<br>
-                MC: ${t.mc || "-"}<br>
-                WA: ${t.wa || "-"}<br>
-                <span class="status">${status}</span><br>
-                <button onclick="updateStatus(${i},'🟢 Pesanan Selesai')">Selesai</button>
-                <button onclick="updateStatus(${i},'🟡 Menunggu Admin')">Menunggu</button>
-                <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
-            </div><hr>
+            <div style="margin-bottom:15px;">
+                <b>${t.id}</b><br>
+                ${t.produk}<br>
+                Rp${t.harga.toLocaleString()}<br>
+                MC: ${t.mc}<br>
+                WA: ${t.wa}<br>
+                <span class="status">${status}</span><br><br>
+
+                <button onclick="updateStatus(${i},'🟢 Pesanan Selesai')">
+                Selesai
+                </button>
+
+                <button onclick="updateStatus(${i},'🟡 Menunggu Admin')">
+                Menunggu
+                </button>
+
+                <button class="danger" onclick="deleteTransaction(${i})">
+                Hapus
+                </button>
+            </div>
+            <hr>
             `;
         });
     }
 
-    document.getElementById("transactionList").innerHTML=html;
+    document.getElementById("transactionList").innerHTML = html;
 }
 
 // INIT
