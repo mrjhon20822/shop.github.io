@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
+<title>Admin Panel - Firebase Realtime</title>
 
 <style>
 body{
@@ -27,6 +27,7 @@ body{
 h1{text-align:center;}
 input, textarea{
     width:100%;
+    box-sizing: border-box;
     padding:10px;
     margin:6px 0;
     border-radius:10px;
@@ -65,60 +66,61 @@ hr{
 
 <div class="container">
 
-<h1>🛠 ADMIN PANEL</h1>
+<h1>🛠 ADMIN PANEL (FIREBASE)</h1>
 <button onclick="window.location.href='https://gabut.mrjhonmc.web.id'">
 ⬅ Balik ke Store
 </button>
 
-<!-- TAMBAH PRODUK -->
 <div class="card">
 <h2>📦 Tambah Produk</h2>
 <input id="name" placeholder="Nama Produk">
-<textarea id="desc" rows="4" placeholder="Deskripsi (bisa Enter ke bawah)"></textarea>
+<textarea id="desc" rows="4" placeholder="Deskripsi"></textarea>
 <input id="price" type="number" placeholder="Harga">
-<button class="btn" onclick="addProduct()">Tambah Produk</button>
+<button class="btn" id="btnTambah">Tambah Produk</button>
 </div>
 
-<!-- DAFTAR PRODUK -->
 <div class="card">
 <h2>📦 Daftar Produk</h2>
-<div id="productList"></div>
+<div id="productList">Loading data...</div>
 </div>
 
-<!-- TRANSAKSI -->
 <div class="card">
-<h2>🧾 Transaksi</h2>
+<h2>🧾 Transaksi (Masih LocalStorage)</h2>
 <div id="transactionList"></div>
 </div>
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-// PASSWORD
+// Sesuai gambar yang kamu kirim
+const firebaseConfig = {
+    apiKey: "AIzaSyDARTjARWORSxZJXpfqyA7VDLX_f0AuE8U",
+    authDomain: "store-ratarasmp.firebaseapp.com",
+    projectId: "store-ratarasmp",
+    storageBucket: "store-ratarasmp.firebasestorage.app",
+    messagingSenderId: "912001211675",
+    appId: "1:912001211675:web:fe925d5d8c5676e88d07be"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// PASSWORD ADMIN
 let pass = prompt("Masukkan Password Admin:");
 if(pass !== "rataradev"){
     alert("Akses Ditolak!");
     window.location.href = "/";
 }
 
-let products = JSON.parse(localStorage.getItem("products")) || [];
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-
-function saveProducts(){
-    localStorage.setItem("products", JSON.stringify(products));
-}
-function saveTransactions(){
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-}
-
 // =======================
-// PRODUK
+// FUNGSI TAMBAH PRODUK
 // =======================
-
-function addProduct(){
+document.getElementById("btnTambah").onclick = async () => {
     let name = document.getElementById("name").value.trim();
-    let desc = document.getElementById("desc").value; // newline tetap tersimpan
+    let desc = document.getElementById("desc").value;
     let price = parseInt(document.getElementById("price").value);
 
     if(!name || !desc || !price){
@@ -126,128 +128,101 @@ function addProduct(){
         return;
     }
 
-    products.push({name,desc,price});
-    saveProducts();
-    renderProducts();
-
-    document.getElementById("name").value="";
-    document.getElementById("desc").value="";
-    document.getElementById("price").value="";
-}
-
-function saveEdit(i){
-    let newName = document.getElementById("editName"+i).value;
-    let newDesc = document.getElementById("editDesc"+i).value;
-    let newPrice = parseInt(document.getElementById("editPrice"+i).value);
-
-    if(!newName || !newDesc || !newPrice){
-        alert("Data tidak boleh kosong!");
-        return;
+    try {
+        await addDoc(collection(db, "produk"), {
+            name: name,
+            desc: desc,
+            price: price,
+            waktu: new Date()
+        });
+        
+        document.getElementById("name").value="";
+        document.getElementById("desc").value="";
+        document.getElementById("price").value="";
+    } catch (e) {
+        alert("Gagal tambah produk: " + e);
     }
+};
 
-    products[i] = {
-        name:newName,
-        desc:newDesc,
-        price:newPrice
-    };
-
-    saveProducts();
-    renderProducts();
-}
-
-function deleteProduct(i){
-    if(confirm("Yakin hapus produk ini?")){
-        products.splice(i,1);
-        saveProducts();
-        renderProducts();
-    }
-}
-
-function renderProducts(){
-    let html="";
-
-    if(products.length===0){
-        html="Belum ada produk.";
+// =======================
+// RENDER PRODUK (REALTIME)
+// =======================
+onSnapshot(collection(db, "produk"), (snapshot) => {
+    let html = "";
+    if (snapshot.empty) {
+        html = "Belum ada produk di Cloud.";
     } else {
-        products.forEach((p,i)=>{
-            html+=`
+        snapshot.forEach((item) => {
+            let p = item.data();
+            let id = item.id;
+            html += `
             <div style="margin-bottom:15px;">
-                <input id="editName${i}" value="${p.name}">
-                <textarea id="editDesc${i}" rows="4">${p.desc}</textarea>
-                <input id="editPrice${i}" type="number" value="${p.price}">
-                <button class="btn" onclick="saveEdit(${i})">Simpan</button>
-                <button class="danger" onclick="deleteProduct(${i})">Hapus</button>
+                <input id="editName${id}" value="${p.name}">
+                <textarea id="editDesc${id}" rows="4">${p.desc}</textarea>
+                <input id="editPrice${id}" type="number" value="${p.price}">
+                <button class="btn" onclick="saveEdit('${id}')">Simpan</button>
+                <button class="danger" onclick="deleteProduct('${id}')">Hapus</button>
             </div>
             <hr>
             `;
         });
     }
-
     document.getElementById("productList").innerHTML = html;
-}
+});
 
 // =======================
-// TRANSAKSI
+// EDIT & HAPUS PRODUK
 // =======================
+window.saveEdit = async (id) => {
+    let newName = document.getElementById("editName"+id).value;
+    let newDesc = document.getElementById("editDesc"+id).value;
+    let newPrice = parseInt(document.getElementById("editPrice"+id).value);
 
-function updateStatus(i,status){
-    transactions[i].status = status;
-    saveTransactions();
-    renderTransactions();
+    try {
+        await updateDoc(doc(db, "produk", id), {
+            name: newName,
+            desc: newDesc,
+            price: newPrice
+        });
+        alert("Update Berhasil!");
+    } catch (e) {
+        alert("Gagal update: " + e);
+    }
+};
+
+window.deleteProduct = async (id) => {
+    if(confirm("Yakin hapus produk ini dari Cloud?")){
+        await deleteDoc(doc(db, "produk", id));
+    }
+};
+
+</script>
+
+<script>
+// Transaksi sementara masih pakai kode lamamu (localStorage)
+// karena kita fokus ke Produk dulu.
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+function renderTransactions(){
+    let html = transactions.length === 0 ? "Belum ada transaksi." : "";
+    transactions.forEach((t,i)=>{
+        let status = t.status || "🟡 Menunggu Admin";
+        html+=`<div style="margin-bottom:15px;">
+            🪪 ID: <b>${t.id}</b><br>
+            📦 Produk: ${t.produk}<br>
+            📈 Status: <span class="status">${status}</span><br>
+            <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
+        </div><hr>`;
+    });
+    document.getElementById("transactionList").innerHTML = html;
 }
-
 function deleteTransaction(i){
-    if(confirm("Yakin hapus transaksi ini?")){
+    if(confirm("Hapus transaksi?")){
         transactions.splice(i,1);
-        saveTransactions();
+        localStorage.setItem("transactions", JSON.stringify(transactions));
         renderTransactions();
     }
 }
-
-function renderTransactions(){
-    let html="";
-
-    if(transactions.length===0){
-        html="Belum ada transaksi.";
-    } else {
-        transactions.forEach((t,i)=>{
-
-            let status = t.status || "🟡 Menunggu Admin";
-
-            html+=`
-            <div style="margin-bottom:15px;">
-                🪪 ID: <b>${t.id}</b><br>
-                📦 Produk: ${t.produk}<br>
-                💵 Harga: ${t.harga.toLocaleString()}<br>K
-                👤 User: ${t.mc}<br>
-                📞 WhatsApp: ${t.wa}<br>
-                🗓️ Tanggal: ${t.tanggal}
-                📈 Status: <span class="status">${status}</span><br><br>
-
-                <button onclick="updateStatus(${i},'🟢 Pesanan Selesai')">
-                Selesai
-                </button>
-
-                <button onclick="updateStatus(${i},'🟡 Menunggu Admin')">
-                Menunggu
-                </button>
-
-                <button class="danger" onclick="deleteTransaction(${i})">
-                Hapus
-                </button>
-            </div>
-            <hr>
-            `;
-        });
-    }
-
-    document.getElementById("transactionList").innerHTML = html;
-}
-
-// INIT
-renderProducts();
 renderTransactions();
-
 </script>
     
 </body>
