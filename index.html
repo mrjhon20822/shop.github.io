@@ -142,12 +142,12 @@ window.showQRIS = () => {
     let wa = document.getElementById("wa").value;
     if(!mc || !wa){ alert("Isi semua data!"); return; }
     buyerData = {mc, wa};
-    let qrisSrc = "https://files.catbox.moe/fkxzic.jpeg";
+    let qrisSrc = "https://i.imgur.com/WKF1ONR.jpeg";
     document.getElementById("store").innerHTML=`<div class="card"><h3>Scan QRIS Untuk Bayar</h3><p>Total: Rp${selectedProduct.price.toLocaleString()}</p><img id="qrisImg" class="qris-img" src="${qrisSrc}"><p class="warning">⚠️ Setelah bayar WAJIB screenshot bukti transfer.</p><button class="buy-btn" onclick="confirmPayment()">Saya Sudah Bayar</button><button class="buy-btn" onclick="downloadQRIS()">Download QRIS</button><button onclick="loadStore()">Batal</button></div>`;
 }
 
 window.downloadQRIS = async () => {
-    let qrisSrc = "https://files.catbox.moe/fkxzic.jpeg";
+    let qrisSrc = "https://i.imgur.com/WKF1ONR.jpeg";
     try {
         const response = await fetch(qrisSrc);
         const blob = await response.blob();
