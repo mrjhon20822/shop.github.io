@@ -97,13 +97,19 @@ const db = getFirestore(app);
 let seller = "6285143590943";
 let selectedProduct = null;
 let buyerData = {};
-let currentProducts = []; // Tempat simpan data dari Firebase
+let currentProducts = []; 
 
 // AMBIL DATA REALTIME DARI FIREBASE
 onSnapshot(collection(db, "produk"), (snapshot) => {
     currentProducts = [];
     snapshot.forEach((doc) => {
-        currentProducts.push(doc.data());
+        let data = doc.data();
+        // Pastikan membaca field 'name' dan 'price' sesuai Firebase
+        currentProducts.push({
+            name: data.name || "Produk Tanpa Nama",
+            desc: data.desc || "Tidak ada deskripsi",
+            price: data.price || 0
+        });
     });
     loadStore();
 });
@@ -111,6 +117,12 @@ onSnapshot(collection(db, "produk"), (snapshot) => {
 function loadStore(){
     document.getElementById("about-section").style.display = "block";
     let store = document.getElementById("store");
+    
+    if (currentProducts.length === 0) {
+        store.innerHTML = "<p style='text-align:center'>Memuat produk dari cloud...</p>";
+        return;
+    }
+
     let html = `<div class="products-grid">`;
     currentProducts.forEach((p,i)=>{
         html+=`<div class="product-card"><div><div class="product-title">${p.name}</div><div class="product-desc">${p.desc}</div><div class="product-price">Rp ${p.price.toLocaleString()}</div></div><button class="product-btn" onclick="buyForm(${i})">Buy</button></div>`;
@@ -157,7 +169,6 @@ window.confirmPayment = () => {
     let date = new Date().toLocaleString();
     let transaksi = {id, produk:selectedProduct.name, tanggal:date, mc:buyerData.mc, wa:buyerData.wa, harga:selectedProduct.price, status:"🟡 Menunggu Pesanan"};
     
-    // Simpan transaksi tetap di localStorage dulu agar tidak pusing
     let all = JSON.parse(localStorage.getItem("transactions") || "[]");
     all.push(transaksi);
     localStorage.setItem("transactions",JSON.stringify(all));
