@@ -271,20 +271,37 @@ renderTransactions();
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
-</script>
-    <script type="module">
-  import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+</script><script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  window.tesFirestore = async function() {
-    await addDoc(collection(window.db, "produk"), {
+  const firebaseConfig = {
+    apiKey: "API_KAMU",
+    authDomain: "PROJECT_KAMU.firebaseapp.com",
+    projectId: "PROJECT_KAMU",
+    storageBucket: "PROJECT_KAMU.firebasestorage.app",
+    messagingSenderId: "XXXX",
+    appId: "XXXX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const btn = document.getElementById("btnTest");
+
+  btn.addEventListener("click", async () => {
+    await addDoc(collection(db, "produk"), {
       name: "Produk Test",
       desc: "Tes dari admin",
       price: 12345
     });
 
-    alert("Berhasil masuk Firestore");
-  }
-    </script>
+    alert("Masuk Firestore!");
+  });
+</script>
+<button id="btnTest">Tes Firestore</button>
+</body>
+</html>
     <button onclick="tesFirestore()">Tes Firestore</button>
 </body>
 </html>
