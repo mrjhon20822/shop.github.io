@@ -272,5 +272,19 @@ renderTransactions();
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
+    <script type="module">
+  import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  window.tesFirestore = async function() {
+    await addDoc(collection(window.db, "produk"), {
+      name: "Produk Test",
+      desc: "Tes dari admin",
+      price: 12345
+    });
+
+    alert("Berhasil masuk Firestore");
+  }
+    </script>
+    <button onclick="tesFirestore()">Tes Firestore</button>
 </body>
 </html>
