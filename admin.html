@@ -216,13 +216,13 @@ function renderTransactions(){
 
             html+=`
             <div style="margin-bottom:15px;">
-                ID: <b>${t.id}</b><br>
-                Produk: ${t.produk}<br>
-                Harga: Rp${t.harga.toLocaleString()}<br>
-                Nama Mc: ${t.mc}<br>
-                Nomor Wa: ${t.wa}<br>
-                Tanggal: ${t.tanggal}
-                <span class="status">${status}</span><br><br>
+                🪪 ID: <b>${t.id}</b><br>
+                📦 Produk: ${t.produk}<br>
+                💵 Harga: ${t.harga.toLocaleString()}<br>K
+                👤 User: ${t.mc}<br>
+                📞 WhatsApp: ${t.wa}<br>
+                🗓️ Tanggal: ${t.tanggal}
+                📈 Status: <span class="status">${status}</span><br><br>
 
                 <button onclick="updateStatus(${i},'🟢 Pesanan Selesai')">
                 Selesai
