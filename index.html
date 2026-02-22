@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
+/* CSS ASLI KAMU - TIDAK DIUBAH SAMA SEKALI */
 body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#140f2d,#1c1340,#0f0a25);color:white;}
 header{text-align:center;padding:35px;font-size:32px;font-weight:700;background:linear-gradient(90deg,#00f7ff,#8a2be2);-webkit-background-clip:text;color:transparent;text-shadow:0 0 25px rgba(0,255,255,0.6);cursor:pointer;user-select:none;display:block;position:relative;z-index:100;}
 .container{padding:20px;max-width:1000px;margin:auto;}
@@ -76,43 +77,55 @@ textarea{resize:none;}
 <p style="text-align:center; font-size:12px; color:#666; margin-top:30px;">© Mrjhon Mc</p>
 </div>
 </div>
-<script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDARTjARWORSxZJXpfqyA7VDLX_f0AuE8U",
+    authDomain: "store-ratarasmp.firebaseapp.com",
+    projectId: "store-ratarasmp",
+    storageBucket: "store-ratarasmp.firebasestorage.app",
+    messagingSenderId: "912001211675",
+    appId: "1:912001211675:web:fe925d5d8c5676e88d07be"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let seller = "6285143590943";
 let selectedProduct = null;
 let buyerData = {};
+let currentProducts = []; // Tempat simpan data dari Firebase
 
-let defaultProducts = [
-    {name:"Hero", desc:"Rank Hero Basic\nFitur:\n- /kit\n- /heal", price:10000},
-    {name:"Master", desc:"Rank Master\nFitur:\n- /fly\n- /nick\n- Sethome 7", price:20000},
-    {name:"Astral", desc:"Rank Astral\nFitur:\n- Semua fitur VIP\n- Vault 5", price:30000},
-    {name:"Voltra", desc:"Rank Voltra Full Power\nFitur:\n- Semua fitur VIP\n- Vault 5", price:40000},
-    {name:"Shards", desc:"Shards\nFitur:\n- Semua fitur VIP\n- Vault 5", price:0},
-    {name:"Armor", desc:"Armor Gacha\nFitur:\n- Semua fitur VIP\n- Vault 5", price:0}
-];
-
-if(!localStorage.getItem("products")) localStorage.setItem("products",JSON.stringify(defaultProducts));
-if(!localStorage.getItem("transactions")) localStorage.setItem("transactions",JSON.stringify([]));
+// AMBIL DATA REALTIME DARI FIREBASE
+onSnapshot(collection(db, "produk"), (snapshot) => {
+    currentProducts = [];
+    snapshot.forEach((doc) => {
+        currentProducts.push(doc.data());
+    });
+    loadStore();
+});
 
 function loadStore(){
     document.getElementById("about-section").style.display = "block";
     let store = document.getElementById("store");
-    let products = JSON.parse(localStorage.getItem("products"));
     let html = `<div class="products-grid">`;
-    products.forEach((p,i)=>{
+    currentProducts.forEach((p,i)=>{
         html+=`<div class="product-card"><div><div class="product-title">${p.name}</div><div class="product-desc">${p.desc}</div><div class="product-price">Rp ${p.price.toLocaleString()}</div></div><button class="product-btn" onclick="buyForm(${i})">Buy</button></div>`;
     });
     html+=`</div>`;
     store.innerHTML = html;
 }
 
-function buyForm(index){
+window.buyForm = (index) => {
     document.getElementById("about-section").style.display = "none";
-    let products = JSON.parse(localStorage.getItem("products"));
-    selectedProduct = products[index];
+    selectedProduct = currentProducts[index];
     document.getElementById("store").innerHTML=`<div class="card"><h3>Beli ${selectedProduct.name}</h3><input id="mc" placeholder="Nama Minecraft"><input id="wa" placeholder="Nomor WhatsApp"><button class="buy-btn" onclick="showQRIS()">Lanjut Pembayaran</button><button onclick="loadStore()">Batal</button></div>`;
 }
 
-function showQRIS(){
+window.showQRIS = () => {
     let mc = document.getElementById("mc").value;
     let wa = document.getElementById("wa").value;
     if(!mc || !wa){ alert("Isi semua data!"); return; }
@@ -121,7 +134,7 @@ function showQRIS(){
     document.getElementById("store").innerHTML=`<div class="card"><h3>Scan QRIS Untuk Bayar</h3><p>Total: Rp${selectedProduct.price.toLocaleString()}</p><img id="qrisImg" class="qris-img" src="${qrisSrc}"><p class="warning">⚠️ Setelah bayar WAJIB screenshot bukti transfer.</p><button class="buy-btn" onclick="confirmPayment()">Saya Sudah Bayar</button><button class="buy-btn" onclick="downloadQRIS()">Download QRIS</button><button onclick="loadStore()">Batal</button></div>`;
 }
 
-async function downloadQRIS(){
+window.downloadQRIS = async () => {
     let qrisSrc = "https://files.catbox.moe/fkxzic.jpeg";
     try {
         const response = await fetch(qrisSrc);
@@ -135,26 +148,29 @@ async function downloadQRIS(){
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
     } catch (error) {
-        alert("Gagal download otomatis. Silakan tekan lama gambar lalu simpan manual.");
+        alert("Gagal download otomatis. Silakan simpan manual.");
     }
 }
 
-function confirmPayment(){
+window.confirmPayment = () => {
     let id = "RTRX-"+Math.floor(Math.random()*1000000);
     let date = new Date().toLocaleString();
     let transaksi = {id, produk:selectedProduct.name, tanggal:date, mc:buyerData.mc, wa:buyerData.wa, harga:selectedProduct.price, status:"🟡 Menunggu Pesanan"};
-    let all = JSON.parse(localStorage.getItem("transactions"));
+    
+    // Simpan transaksi tetap di localStorage dulu agar tidak pusing
+    let all = JSON.parse(localStorage.getItem("transactions") || "[]");
     all.push(transaksi);
     localStorage.setItem("transactions",JSON.stringify(all));
     showStruk(transaksi);
 }
 
-function showStruk(t){
+window.showStruk = (t) => {
     let pesan = `Hai Admin, Saya Sudah Melakukan Pembayaran.\n\n====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\n====================\n\nSaya Akan Mengirim Bukti Pembayaran Sekarang.`;
     let encoded = encodeURIComponent(pesan);
     document.getElementById("store").innerHTML=`<div class="card"><h3>🧾 STRUK PEMBELIAN</h3><pre style="text-align:left">====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\nStatus: ${t.status}\n====================</pre><button class="buy-btn" onclick="window.open('https://wa.me/${seller}?text=${encoded}','_blank')">Kirim Bukti ke Seller</button><button onclick="loadStore()">Kembali</button></div>`;
 }
-    loadStore();
+
+window.loadStore = loadStore;
 </script>
 </body>
 </html>
