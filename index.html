@@ -82,7 +82,6 @@ textarea{resize:none;}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyDARTjARWORSxZJXpfqyA7VDLX_f0AuE8U",
     authDomain: "store-ratarasmp.firebaseapp.com",
@@ -164,7 +163,32 @@ window.downloadQRIS = async () => {
         alert("Gagal download otomatis. Silakan simpan manual.");
     }
 }
+window.confirmPayment = async () => {
+    let id = "RTRX-" + Math.floor(Math.random() * 1000000);
+    let date = new Date().toLocaleString('id-ID');
+    
+    // Data yang dikirim ke Firebase Admin Panel
+    let transaksi = {
+        id: id,
+        tanggal: date,
+        nama: buyerData.mc, // Nama MC
+        wa: buyerData.wa,
+        produk: selectedProduct.name,
+        harga: selectedProduct.price,
+        status: "🟡 Menunggu Admin",
+        waktu: new Date()
+    };
 
+    try {
+        // KIRIM KE FIREBASE
+        await addDoc(collection(db, "transactions"), transaksi);
+        // TAMPILKAN STRUK
+        showStruk(transaksi);
+    } catch (e) {
+        alert("Gagal kirim data ke cloud: " + e);
+    }
+    }
+    
 window.showStruk = (t) => {
     // Pesan WA (menggunakan t.nama karena di atas kita pakai nama)
     let pesan = `Hai Admin, Saya Sudah Melakukan Pembayaran.\n\n====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.nama}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\n====================\n\nSaya Akan Mengirim Bukti Pembayaran Sekarang.`;
