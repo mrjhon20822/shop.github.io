@@ -197,33 +197,63 @@ window.deleteProduct = async (id) => {
 };
 
 </script>
+    <script>
+// ==========================================
+// BAGIAN TRANSAKSI (REALTIME FIRESTORE)
+// ==========================================
 
-<script>
-// Transaksi sementara masih pakai kode lamamu (localStorage)
-// karena kita fokus ke Produk dulu.
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-function renderTransactions(){
-    let html = transactions.length === 0 ? "Belum ada transaksi." : "";
-    transactions.forEach((t,i)=>{
-        let status = t.status || "🟡 Menunggu Admin";
-        html+=`<div style="margin-bottom:15px;">
-            🪪 ID: <b>${t.id}</b><br>
-            📦 Produk: ${t.produk}<br>
-            📈 Status: <span class="status">${status}</span><br>
-            <button class="danger" onclick="deleteTransaction(${i})">Hapus</button>
-        </div><hr>`;
-    });
-    document.getElementById("transactionList").innerHTML = html;
-}
-function deleteTransaction(i){
-    if(confirm("Hapus transaksi?")){
-        transactions.splice(i,1);
-        localStorage.setItem("transactions", JSON.stringify(transactions));
-        renderTransactions();
+// 1. Fungsi Ganti Status
+window.gantiStatus = async (id, statusBaru) => {
+    try {
+        await updateDoc(doc(db, "transactions", id), {
+            status: statusBaru
+        });
+    } catch (e) {
+        alert("Gagal update status: " + e);
     }
-}
-renderTransactions();
-</script>
+};
+
+// 2. Fungsi Hapus Transaksi
+window.deleteTransaction = async (id) => {
+    if(confirm("Hapus riwayat transaksi ini?")){
+        await deleteDoc(doc(db, "transactions", id));
+    }
+};
+
+// 3. Render Transaksi Realtime
+onSnapshot(collection(db, "transactions"), (snapshot) => {
+    let html = "";
+    if (snapshot.empty) {
+        html = "Belum ada transaksi masuk.";
+    } else {
+        snapshot.forEach((item) => {
+            let t = item.data();
+            let id = item.id;
+            let status = t.status || "🟡 Menunggu Admin";
+            
+            // Format Tanggal (jika ada data waktu di Firestore)
+            let tanggal = t.waktu ? new Date(t.waktu.seconds * 1000).toLocaleString('id-ID') : "Tanpa Tanggal";
+
+            html += `
+            <div style="margin-bottom:15px; background: #222; padding: 10px; border-radius: 10px;">
+                🪪 ID: <b>#${id.substring(0,6)}</b><br>
+                📅 Tanggal: ${tanggal}<br>
+                👤 Nama: ${t.nama || "Pelanggan"}<br>
+                📦 Produk: <b>${t.produk || t.items}</b><br>
+                📈 Status: <span class="status">${status}</span><br>
+                <div style="margin-top:10px;">
+                    <button style="background:#2ecc71; color:white;" onclick="gantiStatus('${id}', '🟢 Pesanan Selesai')">🟢 Selesaikan</button>
+                    <button style="background:#f1c40f; color:black;" onclick="gantiStatus('${id}', '🟡 Menunggu Admin')">🟡 Tunggu</button>
+                    <button class="danger" onclick="deleteTransaction('${id}')">🗑️ Hapus</button>
+                </div>
+            </div>
+            <hr>
+            `;
+        });
+    }
+    document.getElementById("transactionList").innerHTML = html;
+});
+<script>
     
 </body>
 </html>
