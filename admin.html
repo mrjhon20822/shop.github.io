@@ -237,10 +237,10 @@ onSnapshot(collection(db, "transactions"), (snapshot) => {
             html += `
             <div style="margin-bottom:15px; background: #222; padding: 10px; border-radius: 10px;">
                 🪪 ID: <b>#${id.substring(0,6)}</b><br>
-                📅 Tanggal: ${tanggal}<br>
                 👤 Nama: ${t.nama || "Pelanggan"}<br>
                 📦 Produk: <b>${t.produk || t.items}</b><br>
                 📈 Status: <span class="status">${status}</span><br>
+                🕒 Waktu: new Date() // Ini yang kita pakai sebagai patokan waktu
                 <div style="margin-top:10px;">
                     <button style="background:#2ecc71; color:white;" onclick="gantiStatus('${id}', '🟢 Pesanan Selesai')">🟢 Selesaikan</button>
                     <button style="background:#f1c40f; color:black;" onclick="gantiStatus('${id}', '🟡 Menunggu Admin')">🟡 Tunggu</button>
