@@ -105,16 +105,16 @@ onSnapshot(collection(db, "produk"), (snapshot) => {
     currentProducts = [];
     snapshot.forEach((doc) => {
         let data = doc.data();
-        // Pastikan membaca field 'name' dan 'price' sesuai Firebase
+        // Membaca data produk dari Firebase
         currentProducts.push({
-            name: data.name || "Produk Tanpa Nama",
-            desc: data.desc || "Tidak ada deskripsi",
-            price: data.price || 0
+            name: data.name || "Tanpa Nama", // Admin simpan sebagai 'name'
+            desc: data.desc || "Tanpa Deskripsi", // Admin simpan sebagai 'desc'
+            price: data.price || 0 // Admin simpan sebagai 'price'
         });
     });
-    loadStore();
+    loadStore(); // Panggil fungsi untuk gambar produk ke layar
 });
-
+    
 function loadStore(){
     document.getElementById("about-section").style.display = "block";
     let store = document.getElementById("store");
