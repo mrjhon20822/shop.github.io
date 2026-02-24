@@ -80,7 +80,7 @@ textarea{resize:none;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDARTjARWORSxZJXpfqyA7VDLX_f0AuE8U",
@@ -164,23 +164,47 @@ window.downloadQRIS = async () => {
     }
 }
 
-window.confirmPayment = () => {
-    let id = "RTRX-"+Math.floor(Math.random()*1000000);
-    let date = new Date().toLocaleString();
-    let transaksi = {id, produk:selectedProduct.name, tanggal:date, mc:buyerData.mc, wa:buyerData.wa, harga:selectedProduct.price, status:"🟡 Menunggu Pesanan"};
+window.confirmPayment = async () => {
+    let idTRX = "RTRX-" + Math.floor(Math.random() * 1000000);
+    let dateTRX = new Date().toLocaleString('id-ID');
     
-    let all = JSON.parse(localStorage.getItem("transactions") || "[]");
-    all.push(transaksi);
-    localStorage.setItem("transactions",JSON.stringify(all));
-    showStruk(transaksi);
+    // Data untuk Firebase
+    let dataKeFirebase = {
+        id: idTRX,
+        tanggal: dateTRX,
+        nama: buyerData.mc,
+        wa: buyerData.wa,
+        produk: selectedProduct.name,
+        harga: selectedProduct.price,
+        status: "🟡 Menunggu Admin",
+        waktu: new Date() // Buat sortir di admin
+    };
+
+    try {
+        // KIRIM DATA KE CLOUD (Supaya Admin Bisa Lihat)
+        await addDoc(collection(db, "transactions"), dataKeFirebase);
+        
+        // JALANKAN STRUK (Tampilan tidak berubah)
+        showStruk(dataKeFirebase);
+    } catch (e) {
+        alert("Gagal kirim data: " + e);
+    }
 }
 
 window.showStruk = (t) => {
-    let pesan = `Hai Admin, Saya Sudah Melakukan Pembayaran.\n\n====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\n====================\n\nSaya Akan Mengirim Bukti Pembayaran Sekarang.`;
+    let pesan = `Hai Admin, Saya Sudah Melakukan Pembayaran.\n\n====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.nama}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\n====================\n\nSaya Akan Mengirim Bukti Pembayaran Sekarang.`;
     let encoded = encodeURIComponent(pesan);
-    document.getElementById("store").innerHTML=`<div class="card"><h3>🧾 STRUK PEMBELIAN</h3><pre style="text-align:left">====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.mc}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\nStatus: ${t.status}\n====================</pre><button class="buy-btn" onclick="window.open('https://wa.me/${seller}?text=${encoded}','_blank')">Kirim Bukti ke Seller</button><button onclick="loadStore()">Kembali</button></div>`;
+    
+    // TAMPILAN STRUK ASLIMU
+    document.getElementById("store").innerHTML=`
+    <div class="card">
+        <h3>🧾 STRUK PEMBELIAN</h3>
+        <pre style="text-align:left">====================\nID Transaksi: ${t.id}\nTanggal: ${t.tanggal}\nNama MC: ${t.nama}\nNomor WA: ${t.wa}\nProduk: ${t.produk}\nHarga: Rp${t.harga.toLocaleString()}\nStatus: ${t.status}\n====================</pre>
+        <button class="buy-btn" onclick="window.open('https://wa.me/${seller}?text=${encoded}','_blank')">Kirim Bukti ke Seller</button>
+        <button onclick="loadStore()">Kembali</button>
+    </div>`;
 }
-
+    
 window.loadStore = loadStore;
 </script>
 </body>
